@@ -1,0 +1,42 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	int *list = malloc(3 * sizeof(int));
+	if(!list)
+		return (1);
+
+	*list = 1;
+	*(list + 1) = 2;
+	*(list + 2) = 3;
+
+
+	// Actually realloc() allows to enlarge memory size but to prevent memory leaks using a temp is usefull
+	// realloc() frees memory automatically
+	int *alc = realloc(list, 4 * sizeof(int));
+	if(alc == 0x0)
+	{
+		free(list);
+		return(1);
+	}
+
+/* 	for (int i = 0; i < 3; i++)
+		*(alc + i) = *(list + i); */ // realloc() handles copying process
+	
+	list = alc;
+
+	//*(alc + 3) = 4;
+	*(list + 3) = 4;
+
+	//free(list);
+	//list = alc;
+
+	for (int i = 0; i < 4; i++)
+		printf("%d\n", *(list + i));
+
+	free(list);
+	system("leaks harvard");
+	return(0);
+}
