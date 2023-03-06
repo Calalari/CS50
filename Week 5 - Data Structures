@@ -192,8 +192,8 @@ int search(harvard *tree, int number)
 typedef struct harvard3
 {
 	char *port;
-	char *p_type;
-	int p_num;
+	char *p_pur;
+	char *p_reg;
 	struct harvard3 *next;
 
 }	harvard3;
@@ -208,9 +208,9 @@ int main(void)
 		return (1);
 	
 
-	alc->port = "A. Airport";
-	alc->p_type = "Boeing";
-	alc->p_num = 961216;
+	alc->port = "Some Airport";
+	alc->p_pur = "Training";
+	alc->p_reg = "TC-EOD";
 
 	alc->next = NULL;
 	alc->next = list;
@@ -219,8 +219,8 @@ int main(void)
 	while(alc != 0x0)
 	{
 		printf("%s\n", alc->port);
-		printf("%s\n", alc->p_type);
-		printf("%d\n", alc->p_num);
+		printf("%s\n", alc->p_pur);
+		printf("%s\n", alc->p_reg);
 		alc = alc->next;
 	}
 	system("leaks harvard3");
