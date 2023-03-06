@@ -39,3 +39,195 @@ int main(void)
 	system("leaks harvard");
 	return(0);
 }
+
+//************************************************************************************************************************************************************//
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	int *list = malloc(3 * sizeof(int));
+	if(!list)
+		return (1);
+
+	*list = 1;
+	*(list + 1) = 2;
+	*(list + 2) = 3;
+
+
+	// Actually realloc() allows to enlarge memory size but to prevent memory leaks using a temp is usefull
+	// realloc() frees memory automatically
+	int *alc = realloc(list, 4 * sizeof(int));
+	if(alc == 0x0)
+	{
+		free(list);
+		return(1);
+	}
+
+	//for (int i = 0; i < 3; i++)
+	//	*(alc + i) = *(list + i);  // realloc() handles copying process
+	
+	list = alc;
+
+	//*(alc + 3) = 4;
+	*(list + 3) = 4;
+
+	//free(list);
+	//list = alc;
+
+	for (int i = 0; i < 4; i++)
+		printf("%d\n", *(list + i));
+
+	free(list);
+	system("leaks harvard");
+	return(0);
+}
+
+//************************************************************************************************************************************************************//
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Usage of harvard as data type requires pre-definition. For that typedef struct harvard implemented.
+typedef struct harvard
+{
+	int number;
+	struct harvard *next;
+
+}	harvard;
+
+
+int main(int argc, char *argv[])
+{
+	//every harvard data typed value will have int number and *next value that we've defined inside struct above
+	harvard *class = NULL;
+
+	for (int i = 1; i < argc; i++)
+	{
+		int number = atoi(argv[i]);
+		harvard *cs50 = malloc(sizeof(harvard));
+		if(cs50 == 0x0)
+			return(1);
+
+		cs50->number = number; // store the number obtained from command line argument value
+
+		cs50->next = NULL; // getting rid of from the second garbage value 
+
+		cs50->next = class; // prepend to the new list named as "class" 
+
+		class = cs50; // update the actual list
+		// in this usage no matter what the argument is last value will be prepended at the beginning of the list
+	}
+
+	harvard *ptr = class; // pointing beginnig of the class list
+	while(ptr != 0x0)
+	{
+		printf("%d\n", ptr->number);
+		ptr = ptr->next; // iterating in linked lists
+	}
+
+	ptr = class;
+	while(ptr != 0x0) // for(harvard *ptr = class; ptr != 0x0; ptr = ptr->next) is an alternative expression for this while loop
+	{
+		harvard *next = ptr->next;
+		free(ptr);
+		ptr = next; // to prevent seg fault while continue on until 0x0
+	}
+	system("leaks harvard1");
+	
+
+/* 	(*class).number = 1; //this syntax is equals to 
+	class->number = 2; // this syntax
+	class->next = NULL; */
+
+	return(0);
+}
+
+//************************************************************************************************************************************************************//
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Usage of harvard as data type requires pre-definition. For that typedef struct harvard implemented.
+typedef struct harvard
+{
+	int number;
+	struct harvard *left;
+	struct harvard *right;
+}	harvard;
+
+/* 
+						4
+				2				6
+			1		3		5		7
+			
+
+			1	2	3	4	5	6	7
+
+	This is a small schematic to observe binary tree
+*/
+
+// Binary search - binary tree
+int search(harvard *tree, int number)
+{
+	if (tree == 0x0)
+		return (NULL);
+	else if (number < tree->number)
+		return search(tree->left, number);
+	else if (number > tree->number)
+		return search(tree->right, number);
+	else
+		return (1);
+	return (0);
+	//logically 0 is success and rest of the numbers are implementing an error. In this case we're returning number to use.
+}
+
+//************************************************************************************************************************************************************//
+
+
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+typedef struct harvard3
+{
+	char *port;
+	char *p_type;
+	int p_num;
+	struct harvard3 *next;
+
+}	harvard3;
+
+
+
+int main(void)
+{
+	harvard3 *list = NULL;
+	harvard3 *alc;
+
+	alc = malloc(sizeof(harvard3));
+	if (alc == 0x0) // adress comparison
+		return (1);
+	
+
+	alc->port = "A. Airport";
+	alc->p_type = "Boeing";
+	alc->p_num = 961216;
+
+	alc->next = NULL;
+	alc->next = list;
+	list = alc;
+
+	while(alc != 0x0)
+	{
+		printf("%s\n", alc->port);
+		printf("%s\n", alc->p_type);
+		printf("%d\n", alc->p_num);
+		alc = alc->next;
+	}
+	system("leaks harvard3");
+	return 0;
+}
