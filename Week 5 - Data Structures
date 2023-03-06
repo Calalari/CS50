@@ -198,8 +198,6 @@ typedef struct harvard3
 
 }	harvard3;
 
-
-
 int main(void)
 {
 	harvard3 *list = NULL;
